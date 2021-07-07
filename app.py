@@ -1,83 +1,81 @@
-#IMPORT
-import pyttsx3
-from pynput import keyboard
-import psutil #for battery
+#tkinter
+import tkinter as tk
 from tkinter import *
+from tkinter import ttk
+from pynput import keyboard
 import speech_recognition #gui
 from win32api import GetSystemMetrics #for now gettting resolution
 from speech_recognition import *
 import time
+import pyttsx3
+import psutil
 
 
-'''Start Interface'''
-window = Tk()
-window.title("Haura")
+window = tk.Tk()   
+window.title("Haura System")
 screenWidth = str(GetSystemMetrics(0))#get screen resolution(width) -> into string
 screenHeight = str(GetSystemMetrics(1))#get screen resolution(height) -> into string
 #because geometry don't accept integer
 window.geometry(screenWidth+"x"+screenHeight)#widthxheight format
-window.configure(bg="white")
+window.iconbitmap('./icon.ico')
+tabControl = ttk.Notebook(window)
 
-
-
-'''setup'''
-def voiceSetup():
-    global engine 
-    global sentence
-    engine = pyttsx3.init() #object creation
-    #set voice
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
-    #set rate
-    rate = engine.getProperty('rate')
-    print("rates:"+ str(rate))
-    engine.setProperty('rate',125)
-
-def timeSetup():
-    global hour, minute, second
-    hour = time.strftime("%H")
-    minute = time.strftime("%M")
-    second = time.strftime("%S")
-
-def batterySetup():
-    global battery, plugged, percent
-    battery = psutil.sensors_battery()
-    plugged = battery.power_plugged
-    plugged = "Plugged In" if plugged else "Not Plugged In"
-    percent = str(battery.percent)
-
-def speechIn():#dont know why yet
-    global r
-    r = speech_recognition.Recognizer()
-
-    with speech_recognition.Microphone() as source:
-        print("Talk")
-        audio_text = r.listen(source)
-        print("Time over, thanks")
-        # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
-    
-        try:
-            # using google speech recognition
-            print("Text: "+r.recognize_google(audio_text))
-        except:
-            print("Sorry, I did not get that")
+global engine
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')
+engine.setProperty('voices', voices[0].id)
 
 def voiceTalk(sentence):
     engine.say(sentence)
     engine.runAndWait()
 
-def batteryFull():
-    voiceTalk("Battery is Full")
 
-voiceSetup()
-timeSetup()
-batterySetup()
-'''Interface Setup'''
-Label(window, text='Battery :'+str(battery.percent)+'%').pack(side=LEFT)
-clockTxt = Label(window, text=hour+":"+minute+":"+second).pack(side=LEFT)
-batteryBtn = Button(window, text="Check Battery", command=lambda:voiceTalk("battery is"+plugged+"and at"+percent+"percent")).pack(side=LEFT)
-hauraBtn = Button(window, text="Haura", command=lambda:voiceTalk('Hello')).pack(side=LEFT)
-talkBtn = Button(window, text="Shaberu", command=speechIn).pack(side=LEFT)
+tab1 = ttk.Frame(tabControl)
+tabControl.add(tab1, text='Home')
+tab2 = ttk.Frame(tabControl)
+tabControl.add(tab2, text='Settings')
+tab3 = ttk.Frame(tabControl)
+tabControl.add(tab3, text='Misc')
+tab4 = ttk.Frame(tabControl)
+tabControl.add(tab4, text='About')
 
-#strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
+tabControl.pack(expand=1, fill="both")
+
+clockDisplay = Label(tab1, text="HH:MM::SS")
+clockDisplay.grid(row=0, column=0)
+dateDisplay = Label(tab1,text="DD")
+dateDisplay.grid(row=1, column=0)
+batteryDisplay = Label(tab1, text="#%")
+batteryDisplay.grid(row=0, column=4) 
+
+def update():
+    global hour24, hour12, minute, second, day, month, year
+    hour24 = time.strftime("%H")
+    hour12 = time.strftime("%I")
+    minute = time.strftime("%M")
+    second = time.strftime("%S")
+    day  = time.strftime("%d")
+    month  = time.strftime("%m")
+    year  = time.strftime("%Y")
+    clock = hour24 +":"+ minute +":"+ second
+    clockDisplay.config(text=clock)
+    date = day+"/"+month+"/"+year
+    dateDisplay.config(text=date)
+   
+
+    global battery, plugged, percent
+    battery = psutil.sensors_battery()
+    percent = battery.percent
+    plugged = battery.power_plugged
+    batteryDisplay.config(text="battery : "+str(percent)+" %")
+    if plugged==TRUE:
+        voiceTalk("Plugged in")
+
+    window.after(1000,update)
+
+#telltime = Button(tab1, text="What time is it?", command=lambda:voiceTalk(hour24+minute+second+year))
+#telltime.grid(row=2, column=0)
+update()
+voiceTalk("Hello there")
+voiceTalk("The time is"+hour12+" hour"+minute+" minute"+second+"seconds")
 window.mainloop()
