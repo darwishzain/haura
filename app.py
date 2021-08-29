@@ -3,9 +3,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from pynput import keyboard
-import speech_recognition #gui
+#import speech_recognition #gui
 from win32api import GetSystemMetrics #for now gettting resolution
-from speech_recognition import *
+#from speech_recognition import *
 import time
 import pyttsx3
 import psutil
@@ -41,12 +41,14 @@ tabControl.add(tab4, text='About')
 
 tabControl.pack(expand=1, fill="both")
 
-clockDisplay = Label(tab1, text="HH:MM::SS")
+clockDisplay = Label(tab1, text="HH:MM::SS", font=("Arial",50))
 clockDisplay.grid(row=0, column=0)
-dateDisplay = Label(tab1,text="DD")
+dateDisplay = Label(tab1,text="DD", font=("Arial",40))
 dateDisplay.grid(row=1, column=0)
-batteryDisplay = Label(tab1, text="#%")
-batteryDisplay.grid(row=0, column=4) 
+batteryDisplay = Label(tab1, text="#%", font=("Arial",30))
+batteryDisplay.grid(row=0, column=5)
+volumeScale = Scale(tab1,from_=0, to=100, fg="blue", orient=HORIZONTAL)
+volumeScale.grid(row=3,column=7) 
 
 def update():
     global hour24, hour12, minute, second, day, month, year
@@ -60,16 +62,20 @@ def update():
     clock = hour24 +":"+ minute +":"+ second
     clockDisplay.config(text=clock)
     date = day+"/"+month+"/"+year
-    dateDisplay.config(text=date)
-   
+    dateDisplay.config(text=date)   
 
     global battery, plugged, percent
     battery = psutil.sensors_battery()
     percent = battery.percent
     plugged = battery.power_plugged
-    batteryDisplay.config(text="battery : "+str(percent)+" %")
-    if plugged==TRUE:
-        voiceTalk("Plugged in")
+    batteryDisplay.config(text=str(percent)+" %")
+    
+    if(percent>=70):
+        batteryDisplay.config(fg="#00FF00")
+    elif(percent>=50):
+        batteryDisplay.config(fg="#FFFF00")
+    elif(percent>=30):  
+        batteryDisplay.config(fg="#FF0000")
 
     window.after(1000,update)
 
@@ -77,5 +83,4 @@ def update():
 #telltime.grid(row=2, column=0)
 update()
 voiceTalk("Hello there")
-voiceTalk("The time is"+hour12+" hour"+minute+" minute"+second+"seconds")
 window.mainloop()
