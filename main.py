@@ -1,3 +1,5 @@
+import function.voice as voice
+#import function.about as about
 #tkinter
 import tkinter as tk
 from tkinter import *
@@ -7,7 +9,6 @@ from pynput import keyboard
 from win32api import GetSystemMetrics #for now gettting resolution
 #from speech_recognition import *
 import time
-import pyttsx3
 import psutil
 
 
@@ -20,14 +21,6 @@ window.geometry(screenWidth+"x"+screenHeight)#widthxheight format
 window.iconbitmap('./icon.ico')
 tabControl = ttk.Notebook(window)
 
-global engine
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('voices', voices[0].id)
-
-def voiceTalk(sentence):
-    engine.say(sentence)
-    engine.runAndWait()
 
 
 tab1 = ttk.Frame(tabControl)
@@ -77,10 +70,20 @@ def update():
     elif(percent>=30):  
         batteryDisplay.config(fg="#FF0000")
 
-    window.after(1000,update)
+    window.after(1000,update)#update time each second
 
 #telltime = Button(tab1, text="What time is it?", command=lambda:voiceTalk(hour24+minute+second+year))
 #telltime.grid(row=2, column=0)
+v=0
+def voiceChange():
+    v+1
+    voice.engine.setProperty('voices', voice.voices[v].id)
+    voice.voiceTalk("Testing")
+    print(voice.voices[v].name)
+
+
+changeVoice = Button(tab1, text="Change", command=lambda:voiceChange())
+changeVoice.grid(row=4,column=4)
 update()
-voiceTalk("Hello there")
+voice.voiceTalk("Welcome back")
 window.mainloop()
