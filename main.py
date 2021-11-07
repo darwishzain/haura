@@ -1,46 +1,44 @@
 import function.voice as voice
-#import function.about as about
+import myvar as myvar
+
 #tkinter
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from pynput import keyboard
 #import speech_recognition #gui
-from win32api import GetSystemMetrics #for now gettting resolution
 #from speech_recognition import *
 import time
 import psutil
 
-
 window = tk.Tk()   
-window.title("Haura System")
-screenWidth = str(GetSystemMetrics(0))#get screen resolution(width) -> into string
-screenHeight = str(GetSystemMetrics(1))#get screen resolution(height) -> into string
+window.title(myvar.appName)
+
 #because geometry don't accept integer
-window.geometry(screenWidth+"x"+screenHeight)#widthxheight format
+window.geometry(myvar.fWidth+"x"+myvar.fHeight)#widthxheight format
 window.iconbitmap('./icon.ico')
 tabControl = ttk.Notebook(window)
 
-
-
 tab1 = ttk.Frame(tabControl)
-tabControl.add(tab1, text='Home')
+tabControl.add(tab1, text=myvar.tab[0])
 tab2 = ttk.Frame(tabControl)
-tabControl.add(tab2, text='Settings')
+tabControl.add(tab2, text=myvar.tab[1])
 tab3 = ttk.Frame(tabControl)
-tabControl.add(tab3, text='Misc')
+tabControl.add(tab3, text=myvar.tab[2])
 tab4 = ttk.Frame(tabControl)
-tabControl.add(tab4, text='About')
+tabControl.add(tab4, text=myvar.tab[3])
 
 tabControl.pack(expand=1, fill="both")
 
-clockDisplay = Label(tab1, text="HH:MM::SS", font=("Arial",50))
+sidePanel = PanedWindow(tab1, bg=myvar.mainColor, width=myvar.qWidth, height=myvar.hHeight)
+sidePanel.grid(row=0, column =0)
+clockDisplay = Label(sidePanel, text="HH:MM::SS", font=("Arial",50))
 clockDisplay.grid(row=0, column=0)
-dateDisplay = Label(tab1,text="DD", font=("Arial",40))
+dateDisplay = Label(sidePanel,text="DD", font=("Arial",40))
 dateDisplay.grid(row=1, column=0)
-batteryDisplay = Label(tab1, text="#%", font=("Arial",30))
+batteryDisplay = Label(sidePanel, text="#%", font=("Arial",30))
 batteryDisplay.grid(row=0, column=5)
-volumeScale = Scale(tab1,from_=0, to=100, fg="blue", orient=HORIZONTAL)
+volumeScale = Scale(sidePanel,from_=0, to=100, fg="blue", orient=HORIZONTAL)
 volumeScale.grid(row=3,column=7) 
 
 def update():
@@ -85,5 +83,5 @@ def voiceChange():
 changeVoice = Button(tab1, text="Change", command=lambda:voiceChange())
 changeVoice.grid(row=4,column=4)
 update()
-voice.voiceTalk("Welcome back")
+voice.voiceTalk("Hi Recluse")
 window.mainloop()
