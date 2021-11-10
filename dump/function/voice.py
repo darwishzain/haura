@@ -4,7 +4,7 @@ import pyttsx3
 global engine
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voices', voices[0].id)
+engine.setProperty('voices', voices[2].id)
 
 def voiceTalk(sentence):
     engine.say(sentence)
