@@ -1,8 +1,10 @@
 import speech_recognition as sr
+#! no module named speech_recognition
 import pyttsx3
+#! No module named pyttsx3
 
 global engine
-engine = pyttsx3.init('sapi5')
+engine = pyttsx3.init('')
 voices = engine.getProperty('voices')
 engine.setProperty('voices', voices[1].id)
 
