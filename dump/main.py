@@ -2,10 +2,10 @@ import function.voice as voice
 import myvar as myvar
 
 #tkinter
-import tkinter as tk
-from tkinter import *
+import Tkinter as tk
+from Tkinter import *
 from tkinter import ttk
-from pynput import keyboard
+#from pynput import keyboard
 #import speech_recognition #gui
 #from speech_recognition import *
 import time

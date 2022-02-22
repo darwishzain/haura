@@ -1,0 +1,2 @@
+pyttsx3 require libespeak1 to use pyttsx3 in ubuntu
+sudo apt install libespeak1
